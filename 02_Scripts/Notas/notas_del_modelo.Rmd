@@ -1,0 +1,129 @@
+---
+title: "Modelo Epidemiolgíco de Querétaro"
+author: "Luis Andres Rojas Garcia"
+date: "`r format(Sys.time(), '%B %d , %Y')`"
+output: html_document
+---
+
+# Modelo inicial
+
+## Diagrama por compartimentos
+
+Modelo generado por Roberto Álvarez para la dinámica de COVID-19 en la ciudad de Querétaro con base en el modelo epidemiológico de la Ciudad de México.
+
+![Modelo incial](cap_1.png)
+
+## Inferir los parámetros y variables
+
++ Parámetros
+
++----------------+------------------------------------------------------------+
+| Parámetros     | Significado                                                |
++================+============================================================+
+| $\beta$        | Tasa de infección por la interacción $SI$ |
++----------------+------------------------------------------------------------+
+| $\alpha _1$    | Tasa/Tiempo a la que los individuos infectados expuestos se vuelven infectados infectantes | 
++----------------+------------------------------------------------------------+
+| $\delta$       | Tasa/Tiempo a la que los individuos infectados se vuelven infectados leves o infectados graves |
++----------------+------------------------------------------------------------+
+| $p_g$          | Fracción de individuos infectados que se vuelven graves $0 \le p_g \le 1$ |
++----------------+------------------------------------------------------------+
+| $(1-p_g)$      | Resto de individuos infectados que no se vuelven graves, se vuelven infectados leves |
++----------------+------------------------------------------------------------+
+| $\gamma _1$    | Tasa/Tiempo en la que los individuos infectados leves se recuperan |
++----------------+------------------------------------------------------------+
+| $\delta _2$    | Tasa/Tiempo a la que los individuos infectados graves son hospitalizados |
++----------------+------------------------------------------------------------+
+| $\alpha _2$    | Tasa/Tiempo a la que los individuos hospitalizados se recuperan |
++----------------+------------------------------------------------------------+
+| $p_i$          | Fracción de individuos hospitalizados que son intubados $0 \le p_i \le 1$ |
++----------------+------------------------------------------------------------+
+| $(1-p_i)$      | Resto de individuos hospitalizados que no son intubados, se recuperan | 
++----------------+------------------------------------------------------------+
+| $\delta _2$    | Tasa/Tiempo a la que los individuos hospitalizados son intubados | 
++----------------+------------------------------------------------------------+
+| $\mu$          | Fracción de individuos intubados que mueren $0 \le \mu \le 1$ |
++----------------+------------------------------------------------------------+
+| $(1-\mu)$      | Resto de individuos intibados que no mueren, se recuperan |
++----------------+------------------------------------------------------------+
+| $\delta _3$    | Tasa/Tiempo a la que los individuos intubados mueren |
++----------------+------------------------------------------------------------+
+
++ Variables
+
+- $S$ : individuos suceptibles
+- $E$ : individuos expuestos infectados pero no infectantes
+- $I$ : individuos infectados que son infectantes
+- $I_l$ : individuos infectados leves
+- $I_g$ : individuos infectados graves
+- $I_h$ : individuos infectados hospitalizados
+- $I_i$ : individuos infectados intubados
+- $R$ : individuos recuperados
+- $M$ : individuos muertos
+
+# Modificación del modelo
+
+## Diagrama por compartimentos
+
+![Modelo modificado](cap_2.png)
+
+## Inferencia de parámetros y variables
+
++ Parámetros
+
++----------------+------------------------------------------------------------+
+| Parámetros     | Significado                                                |
++================+============================================================+
+| $\beta$        | Tasa de infección por la interacción $SI$ |
++----------------+------------------------------------------------------------+
+| $\alpha$       | Tasa/Tiempo a la que los individuos infectados expuestos se vuelven infectados infectantes | 
++----------------+------------------------------------------------------------+
+| $\delta$       | Tasa/Tiempo a la que los individuos infectados se vuelven infectados leves o infectados hospitalizados |
++----------------+------------------------------------------------------------+
+| $p_h$          | Fracción de individuos infectados que son hospitalizados $0 \le p_g \le 1$ |
++----------------+------------------------------------------------------------+
+| $(1-p_h)$      | Resto de individuos infectados que no son hospitalizados, se vuelven infectados leves |
++----------------+------------------------------------------------------------+
+| $\gamma _R$    | Tasa/Tiempo en la que los individuos infectados leves se recuperan |
++----------------+------------------------------------------------------------+
+| $\gamma _h$    | Tasa/Tiempo a la que los individuos hospitalizados se recuperan |
++----------------+------------------------------------------------------------+
+| $p_i$          | Fracción de individuos hospitalizados que son intubados $0 \le p_i \le 1$ |
++----------------+------------------------------------------------------------+
+| $(1-p_i)$      | Resto de individuos hospitalizados que no son intubados, se recuperan | 
++----------------+------------------------------------------------------------+
+| $\delta h$     | Tasa/Tiempo a la que los individuos hospitalizados son intubados 
++----------------+------------------------------------------------------------+
+| $\mu$          | Fracción de individuos intubados que mueren $0 \le \mu \le 1$ |
++----------------+------------------------------------------------------------+
+| $(1-\mu)$      | Resto de individuos intubados que no mueren, se recuperan |
++----------------+------------------------------------------------------------+
+| $\delta _i$    | Tasa/Tiempo a la que los individuos intubados mueren |
++----------------+------------------------------------------------------------+
+| $\gamma _i$    | Tasa/Tiempo a la que los individuos intubados se recuperan |
++----------------+------------------------------------------------------------+
+
++ Variables
+
+- $S$ : individuos suceptibles
+- $E$ : individuos expuestos infectados pero no infectantes
+- $I$ : individuos infectados que son infectantes
+- $I_l$ : individuos infectados leves
+- $I_h$ : individuos infectados hospitalizados
+- $I_i$ : individuos infectados intubados
+- $R$ : individuos recuperados
+- $M$ : individuos muertos
+
+## Ecuaciones
+
+$$\begin{array}{l}
+\dot S = -\beta SI \\
+\dot E = \beta SI - \alpha E \\
+\dot I = \alpha E - p_h\delta I - (1-p_h)\delta I \\
+\dot I_l = (1-p_h)\delta I - \gamma _R I_l \\
+\dot I_h = p_h\delta I - p_i\delta _h I_h - (1-p_i)\gamma _h I_h \\
+\dot I_i = p_i\delta _h I_h - \mu \delta _i I_i - (1-\mu)\gamma _i I_i \\
+\dot M = \mu \delta _i I_i \\ 
+\dot R = \gamma _R I_l + (1-p_i)\gamma _h I_h + (1-\mu)\gamma _i I_i
+\end{array}$$
+
