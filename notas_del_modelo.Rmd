@@ -11,7 +11,7 @@ output: html_document
 
 Modelo generado por Roberto Álvarez para la dinámica de COVID-19 en la ciudad de Querétaro con base en el modelo epidemiológico de la Ciudad de México.
 
-![Modelo incial](cap_1.png)
+![Modelo incial](05_Images/cap_1.png)
 
 ## Inferir los parámetros y variables
 
@@ -65,7 +65,7 @@ Modelo generado por Roberto Álvarez para la dinámica de COVID-19 en la ciudad 
 
 ## Diagrama por compartimentos
 
-![Modelo modificado](cap_2.png)
+![Modelo modificado](05_Images/cap_2.png)
 
 ## Inferencia de parámetros y variables
 
@@ -127,3 +127,33 @@ $$\begin{array}{l}
 \dot R = \gamma _R I_l + (1-p_i)\gamma _h I_h + (1-\mu)\gamma _i I_i
 \end{array}$$
 
+# Definiciones de categorías y parámetros
+
+## Diagrama de compartimentos
+
+Para la definición de los parámetros y categorías se tomó como base el modelo de la CDMX
+
+![Modelo](05_Images/cap_3.png)
+
+## Categorías
+
+```{r warning=FALSE, message=FALSE}
+source("02_Scripts/Script.R")
+t<-cbind(p_p, p_l, p_h, p_i, p_m)
+colnames(t) <- c("S -> I", "I -> L", "I -> G", "G -> ICU", "ICU -> M")
+print(t)
+```
+
+Con base en las probabilidades de transición para cada uno de los estados de enfermedad (variables), se definen las categorias de grupos de edad. 
+
++ **Categoría 1** : Personas menores de 18 años, Personas de 18 a 29 años, Personas de 30 a 29 años.
++ **Categoría 2** : Personas de 40 a 49 años, Personas de 50 a 59 años.
++ **Categoría 3** : Personas de 60 a 69 años, Personas mayores a 79 años.
+
+## Parámetros
+
+Los parámetros serían las probabilidades de transición de cada una de las variables. 
+
+```{r}
+print(t)
+```
