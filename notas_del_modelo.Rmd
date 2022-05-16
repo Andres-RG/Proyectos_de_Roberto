@@ -142,6 +142,8 @@ source("02_Scripts/Script.R")
 t<-cbind(p_p, p_l, p_h, p_i, p_m)
 colnames(t) <- c("S -> I", "I -> L", "I -> G", "G -> ICU", "ICU -> M")
 print(t)
+
+### IGNORAR EL HEATMAP Y EL DENDOGRAMA ... POR EL MOMENTO
 ```
 
 Con base en las probabilidades de transición para cada uno de los estados de enfermedad (variables), se definen las categorias de grupos de edad. 
@@ -157,3 +159,76 @@ Los parámetros serían las probabilidades de transición de cada una de las var
 ```{r}
 print(t)
 ```
+
+## Tabla de Probabilidades
+
+```{r}
+p_t <- cbind(p_p, p_l, p_h, p_i, p_m)
+colnames(p_t) <- c("Suceptible --> Infectado",
+                      "Infectado --> Ambulatorio",
+                      "Infectado --> Grave",
+                      "Grave --> ICU",
+                      "ICU --> Muerte")
+p_t
+```
+
+## Correlación de probabilidades
+```{r}
+heatmap(cor(t(p_t)))
+```
+
+De acuerdo a las categorias obtenidas por el heatmap, podemos definir los grupoes de acuerdo a: 
+
++ **Grupo 1** : Personas 30-39, Personas 40-49.
++ **Grupo 2** : Personas -18, Personas 18-29
++ **Grupo 3** : Personas 50-59
++ **Grupo 4** : Personas 60-69
++ **Grupo 5** : Personas 70+
+
+## Analisis de clusters
+```{r}
+library(ape)
+d_p_t <- dist(p_t)
+clu <- hclust(d_p_t, method = "complete", members = NULL)
+clu_p <- plot ( as.phylo  (clu), type = "phylogram" )
+```
+
+De acuerdo al dendograma obtenido por el análisis de clusters, podemos definir los grupos de acuerdo a:
+
++ **Grupo 1** : Personas 60-69, Personas 50-59.
++ **Grupo 2** : Personas 70+
++ **Grupo 3** : Personas 40-49, Personas 30-39
++ **Grupo 4** : Personas 18-29, Personas -18
+
+Para el desarrollo de este modelo, se decidió tomar esta última clasificación. 
+
+Para comprobar que los grupos definidos por el análisis de clúster son robustos, se realizó el análisis por distintos métodos de clustering.
+
+```{r}
+agroup1 <- hclust(d_p_t, method = "complete", members = NULL)
+agroup2 <- hclust(d_p_t, method = "ward.D", members = NULL)
+agroup3 <- hclust(d_p_t, method = "ward.D2", members = NULL)
+agroup4 <- hclust(d_p_t, method = "single", members = NULL)
+agroup5 <- hclust(d_p_t, method = "average", members = NULL)
+agroup6 <- hclust(d_p_t, method = "mcquitty", members = NULL)
+agroup7 <- hclust(d_p_t, method = "median", members = NULL)
+agroup8 <- hclust(d_p_t, method = "median", members = NULL)
+agroup9 <- hclust(d_p_t, method = "centroid", members = NULL)
+#   3) Graficar usando la funcion: plot ()
+#      Para visualizar llos analisis usando layout
+layout ( matrix ( c( 1 : 9 ), 3, 3))
+plot(agroup1)
+plot(agroup2) 
+plot(agroup3)
+plot(agroup4)
+plot(agroup5) 
+plot(agroup6) 
+plot(agroup7)
+plot(agroup8)
+plot(agroup9)
+layout(matrix (c (1), 1, 1))
+```
+
+Aunque algunos métodos se obtienen resultados distintos, al menos tres métodos concuerdan con los grupos previamente definidos, así que se eligió trabajar con esta clasificación. Además de que es la que menos grupos tiene y facilitará el análisis del modelo posteriormente. 
+
+
