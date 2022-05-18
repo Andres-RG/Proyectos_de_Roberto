@@ -1,4 +1,5 @@
 library(ggplot2)
+library(ggridges)
 library(tidyverse)
 library(viridisLite)
 library(viridis)
@@ -134,18 +135,63 @@ plot(agroup9)
 layout(matrix (c (1), 1, 1))
 
 ## ACTUALIZACION DE DATOS AL 8-04-2022=======================================++
-datos_covidmx
-datos_covid_qro_act_8_04_2022 <- filter(datos_covid_qro, ENTIDAD_UM == 22)
-positivos_act <- filter(datos_covid_qro_act_8_04_2022, CLASIFICACION_FINAL == 1 | 
-                      CLASIFICACION_FINAL == 2 |
-                      CLASIFICACION_FINAL == 3 )
-pos <- c()
-for (i in 1:length(positivos_act$FECHA_SINTOMAS) ) {
-  pos <- c(pos,1)
-}
-positivos_act <- mutate(positivos_act, positivos = pos)
-p <- aggregate(positivos~FECHA_SINTOMAS, data = positivos_act,
-               FUN = sum)
-p[,3] <- c(1:length(p$FECHA_SINTOMAS))
-colnames(p)[3] <- "num.dia"
-print(p)
+# datos_covidmx #base de datos de Mexico
+# datos_covid_qro_act_8_04_2022 <- filter(datos_covidmx, ENTIDAD_UM == 22) #datos de qro actualizados
+# save(datos_covid_qro_act_8_04_2022, file = "01_Raw_Data/datos_covid_qro_actualizados.RData")
+datos_covid_qro_act_8_04_2022
+
+### filtra los datos actualizados a solamente casos positivos
+# positivos_act <- filter(datos_covid_qro_act_8_04_2022, CLASIFICACION_FINAL == 1 | 
+#                      CLASIFICACION_FINAL == 2 |
+#                     CLASIFICACION_FINAL == 3 )
+#####
+# pos <- c() #crea un vector vacio
+# for (i in 1:length(positivos_act$FECHA_SINTOMAS) ) {
+#   pos <- c(pos,1)
+# } # por cada uno de los positivos, coloca un 1 en el vector-
+# positivos_act <- mutate(positivos_act, positivos = pos) # genera una nueva columna en la base de los positivos
+# la nueva columna la rellena con el vector de 1's creado. Hay un 1 en todos los renglones
+# Suma todos los positivos de un solo fía por fecha de inicio de sintomas
+# positivos_conteo <- aggregate(positivos~FECHA_SINTOMAS, data = positivos_act, 
+#                              FUN = sum)
+# Genera otra columna en elobjeto
+# positivos_conteo [,3] <- c(1:length(positivos_conteo$FECHA_SINTOMAS))
+# colnames(positivos_conteo)[3] <- "num.dia" # agrega el numero de dia a la columna 3
+positivos_conteo
+# re2 <- rangos_edades(positivos_act$EDAD)
+positivos_act <- mutate(positivos_act, rango_edad = re2)
+positivos_act <- mutate(positivos_act, muerte = c
+                                ( ifelse( !is.na( positivos_act$FECHA_DEF ), 
+                                          "Muerte", "No muerte") ) )
+positivos_act
+# Esta grafica contiene EL TOTAL de positivos por fecha de inciio de síntomas separado
+# por rango de edades
+ggplot(positivos_act, aes(x = FECHA_SINTOMAS, y = rango_edad, fill = 0.5 - 
+                   abs(0.5 - stat(ecdf)))) +
+  stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = T) +
+  scale_fill_viridis_c(name = "Tail probability", direction = -1)
+##==============================================
+tot_jbr <- mutate(tot, individuo = 1)
+str(tot_jbr)
+tot_jbexf <- aggregate(tot_jbr$individuo, by = list(tot_jbr$rango_edad, tot_jbr$FECHA_SINTOMAS), FUN = sum)
+tot_jbexf ### Se obtiene una tabla con las personas detectadas por dia y por rango de edad. No contempla 
+# su estado (positivos, negativos, hospitalizados, intubados, etc)
+##==============================================
+## Conteo de suceptibles
+
+## Conteo de Infectados
+
+## Conteo de Hospitalizados
+
+## Conteo de Intubados
+
+## Conteo de Muertes
+
+
+
+
+
+
+
+
+
