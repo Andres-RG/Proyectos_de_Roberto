@@ -14,7 +14,8 @@ source("03_Functions/Functions.R")
 ###
 
 tot <- mutate(datos_covid_qro, rango_edad = rangos_edades(datos_covid_qro$EDAD))
-
+# tot contiene todos los datos de covid incluido RANGO DE EDAD hasta diciembre 
+# de 2021.
 
 ## Gráfica apilada de casos positivos a covid por rangos de edades 
 ## en (18-, 18-29,30-39,40-49,50-59,60-70, 70+)
@@ -30,11 +31,12 @@ tot <- mutate(datos_covid_qro, rango_edad = rangos_edades(datos_covid_qro$EDAD))
 positivos <- filter(datos_covid_qro, CLASIFICACION_FINAL == 1 | 
                       CLASIFICACION_FINAL == 2 |
                       CLASIFICACION_FINAL == 3 )
+# positivos contiene todos los casos POSITIVOS de la base de datos 2021
 
 re <- rangos_edades(positivos$EDAD)
 
 positivos_re <- mutate(positivos, rango_edad = re)
-
+# positivos_re contiene los CASOS POSITIVOS a Covid incluido el rango de edad.
 ######### Grafica ##########
 
 plot_positivos_re <- ggplot(positivos_re, 
@@ -64,21 +66,21 @@ p_p
 ######## Infectado a Leve (Ambulatorio) #########
 
 leve <- filter(positivos_re, TIPO_PACIENTE == 1)
-
+# leve contiene solamente los TIPO_PACIENTE = 1, que es caso ambulatorio
 p_l <- probabilidades(leve, positivos_re)
 p_l
 
 ######## Infectado a Grave (Hospitalizado) #########
 
 hosp<- filter(positivos_re, TIPO_PACIENTE == 2)
-
+# hosp contiene solamente los TIPO_PACIENTE = 2, que es caso hospitalizado
 p_h <- probabilidades(hosp, positivos_re)
 p_h
 
 ######## Grave (Hospitalizado) a Intubado (ICU) #########
 
 int <- filter(positivos_re, INTUBADO == 1)
-
+# int contiene solamente pacientes INTUBADOS
 p_i <- probabilidades(int, positivos_re)
 p_i
 
@@ -87,8 +89,10 @@ p_i
 positivos_m <- mutate(positivos_re, muerte = c
                       ( ifelse( !is.na( positivos_re$FECHA_DEF ), 
                                 "Muerte", "No muerte") ) )
+# positivos_m contiene una columna extra que indica el rango de edad +++++++
+# si el paciente murió o no
 muerte <- filter(positivos_m, muerte == "Muerte")
-
+# muerte contiene solamente las personas registradas que fallecieron
 p_m<- probabilidades(muerte, positivos_re)
 p_m
 
@@ -100,6 +104,9 @@ colnames(p_t) <- c("Suceptible --> Infectado",
                       "Infectado --> Grave",
                       "Grave --> ICU",
                       "ICU --> Muerte")
+p_t
+# p_t es la tabla de probabilidades de transición de los distintos estados 
+# definidos en el modelo
 
 ## Correlación de las probabilidades =======================
 
@@ -140,32 +147,51 @@ layout(matrix (c (1), 1, 1))
 # datos_covid_qro_act_8_04_2022 <- filter(datos_covidmx, ENTIDAD_UM == 22) #datos de qro actualizados
 # save(datos_covid_qro_act_8_04_2022, file = "01_Raw_Data/datos_covid_qro_actualizados.RData")
 datos_covid_qro_act_8_04_2022
+# datos_covid_qro_act_8_04_2022 contiene los datos crudos actualizados a la
+# fecha indicada
+
 # re3 <- rangos_edades(datos_covid_qro_act_8_04_2022$EDAD)
 datos_covid_qro_act_8_04_2022_re <- mutate(datos_covid_qro_act_8_04_2022, rango_edad = re3)
+#datos_covid_qro_act_8_04_2022_re cotneiene los datos actualizados y se agrega
+#la clasificación de los rangos de edad
+
 ### filtra los datos actualizados a solamente casos positivos
 positivos_act <- filter(datos_covid_qro_act_8_04_2022, CLASIFICACION_FINAL == 1 | 
                       CLASIFICACION_FINAL == 2 |
                      CLASIFICACION_FINAL == 3 )
+# positivos_act cotneien solamente los casos positivos actualziados + rangos 
+# de edad
+
 #####
-# pos <- c() #crea un vector vacio
-# for (i in 1:length(positivos_act$FECHA_SINTOMAS) ) {
-#   pos <- c(pos,1)
-# } # por cada uno de los positivos, coloca un 1 en el vector-
-# positivos_act <- mutate(positivos_act, positivos = pos) # genera una nueva columna en la base de los positivos
+#pos <- c() #crea un vector vacio
+#for (i in 1:length(positivos_act$FECHA_SINTOMAS) ) {
+#   pos <- c(pos,1) } # por cada uno de los positivos, coloca un 1 en el vector-
+positivos_act <- mutate(positivos_act, positivos = pos) # genera una nueva columna en la base de los positivos
 # la nueva columna la rellena con el vector de 1's creado. Hay un 1 en todos los renglones
 # Suma todos los positivos de un solo fía por fecha de inicio de sintomas
-# positivos_conteo <- aggregate(positivos~FECHA_SINTOMAS, data = positivos_act, 
-#                              FUN = sum)
+positivos_conteo <- aggregate(positivos~FECHA_SINTOMAS, data = positivos_act, 
+                              FUN = sum)
 # Genera otra columna en elobjeto
-# positivos_conteo [,3] <- c(1:length(positivos_conteo$FECHA_SINTOMAS))
-# colnames(positivos_conteo)[3] <- "num.dia" # agrega el numero de dia a la columna 3
+positivos_conteo [,3] <- c(1:length(positivos_conteo$FECHA_SINTOMAS))
+colnames(positivos_conteo)[3] <- "num.dia" # agrega el numero de dia a la columna 3
 positivos_conteo
+# positivos_conteo es una tabla que contiene la FECHA DE INICIO DE SINTOMAS y
+# los casos positivos de ese día, así como una seriación de días que lleva
+# desde el primer caso positicvo
+
+#####
+
 # re2 <- rangos_edades(positivos_act$EDAD)
 positivos_act <- mutate(positivos_act, rango_edad = re2)
 positivos_act <- mutate(positivos_act, muerte = c
                                 ( ifelse( !is.na( positivos_act$FECHA_DEF ), 
                                           "Muerte", "No muerte") ) )
 positivos_act
+# positivos_act contiene los casos positivos actualizados + 
+# rango de edad +
+# una columna de 1's que indica que son 1 posiivo +
+# una columna que indica si el paciente falleció o no
+
 # Esta grafica contiene EL TOTAL de positivos por fecha de inciio de síntomas separado
 # por rango de edades
 ggplot(positivos_act, aes(x = FECHA_SINTOMAS, y = rango_edad, fill = 0.5 - 
@@ -173,12 +199,23 @@ ggplot(positivos_act, aes(x = FECHA_SINTOMAS, y = rango_edad, fill = 0.5 -
   stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = T) +
   scale_fill_viridis_c(name = "Tail probability", direction = -1)
 ##==============================================
+
+
+
+
 tot_jbr <- mutate(tot, individuo = 1)
 str(tot_jbr)
+# tot_jbr contiene la base de datos COMPLETA + rangos de edad + 
+# una columna de 1's para indicar que son 1 persona
 tot_jbexf <- aggregate(tot_jbr$individuo, by = list(tot_jbr$rango_edad, tot_jbr$FECHA_SINTOMAS), FUN = sum)
+colnames(tot_jbexf) <- c("Rango de Edad", "FECHA_SINTOMAS", "Casos totales")
 tot_jbexf ### Se obtiene una tabla con las personas detectadas por dia y por rango de edad. No contempla 
 # su estado (positivos, negativos, hospitalizados, intubados, etc)
 ###===================+++
+
+
+
+
 ###==================++++
 ## GRAFICA DE LOS DATOS ACTUALIZADOS CON CASOS POSITIVOS ACUMULADOS 
 plot_positivos_act <- ggplot(positivos_act, 
@@ -197,7 +234,11 @@ plot_positivos_act
 #  2021 a la fecha de actualización de los datos
 #-----------------------------
 totales_act_recientes <- filter(datos_covid_qro_act_8_04_2022_re, FECHA_SINTOMAS > "2021-09-01")
+# totales_act_recientes contiene los datos TOTALES de los datos actualizados
+# pero solo desde el 1 de septiembre del 2021 al 7 de abril del 2022
 positivos_act_recientes <- filter(positivos_act, FECHA_SINTOMAS > "2021-09-01")
+# positivos_act_recientes contiene los datos de casos POSITIVOS de los datos actualizados
+# pero solo desde el 1 de septiembre del 2021 al 7 de abril del 2022
 #----------##
 # Probabilidades recientes
 ######## Suceptible a Infectado ##########
