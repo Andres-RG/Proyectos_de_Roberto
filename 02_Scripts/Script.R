@@ -5,6 +5,7 @@ library(viridisLite)
 library(viridis)
 library(deSolve)
 library(ape)
+library(lubridate)
 source("01_Raw_Data/Raw_data.R")
 source("03_Functions/Functions.R")
 
@@ -139,11 +140,12 @@ layout(matrix (c (1), 1, 1))
 # datos_covid_qro_act_8_04_2022 <- filter(datos_covidmx, ENTIDAD_UM == 22) #datos de qro actualizados
 # save(datos_covid_qro_act_8_04_2022, file = "01_Raw_Data/datos_covid_qro_actualizados.RData")
 datos_covid_qro_act_8_04_2022
-
+# re3 <- rangos_edades(datos_covid_qro_act_8_04_2022$EDAD)
+datos_covid_qro_act_8_04_2022_re <- mutate(datos_covid_qro_act_8_04_2022, rango_edad = re3)
 ### filtra los datos actualizados a solamente casos positivos
-# positivos_act <- filter(datos_covid_qro_act_8_04_2022, CLASIFICACION_FINAL == 1 | 
-#                      CLASIFICACION_FINAL == 2 |
-#                     CLASIFICACION_FINAL == 3 )
+positivos_act <- filter(datos_covid_qro_act_8_04_2022, CLASIFICACION_FINAL == 1 | 
+                      CLASIFICACION_FINAL == 2 |
+                     CLASIFICACION_FINAL == 3 )
 #####
 # pos <- c() #crea un vector vacio
 # for (i in 1:length(positivos_act$FECHA_SINTOMAS) ) {
@@ -176,7 +178,61 @@ str(tot_jbr)
 tot_jbexf <- aggregate(tot_jbr$individuo, by = list(tot_jbr$rango_edad, tot_jbr$FECHA_SINTOMAS), FUN = sum)
 tot_jbexf ### Se obtiene una tabla con las personas detectadas por dia y por rango de edad. No contempla 
 # su estado (positivos, negativos, hospitalizados, intubados, etc)
+###===================+++
+###==================++++
+## GRAFICA DE LOS DATOS ACTUALIZADOS CON CASOS POSITIVOS ACUMULADOS 
+plot_positivos_act <- ggplot(positivos_act, 
+                             aes(x=FECHA_SINTOMAS, y = EDAD, fill = rango_edad)) + 
+  geom_bar(position="stack", stat="identity") +
+  ggtitle("Casos positivos a COVID ACTUALIZADOS por rangos de edades 
+          para el estado de Queretaro") + 
+  labs(x="Tiempo", y="Casos") +
+  labs(fill="Rangos de Edad") +
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(panel.background = element_rect(fill = "white"), 
+        axis.line = element_line(colour = "black", size = 1)) +
+  scale_fill_viridis(discrete = T)
+plot_positivos_act
+## Se van a obtener las probabilidades de los casos recientes. De septiembre de 
+#  2021 a la fecha de actualización de los datos
+#-----------------------------
+totales_act_recientes <- filter(datos_covid_qro_act_8_04_2022_re, FECHA_SINTOMAS > "2021-09-01")
+positivos_act_recientes <- filter(positivos_act, FECHA_SINTOMAS > "2021-09-01")
+#----------##
+# Probabilidades recientes
+######## Suceptible a Infectado ##########
+p_p_rec <- probabilidades(positivos_act_recientes, totales_act_recientes)
+p_p_rec
+######## Infectado a Leve (Ambulatorio) #########
+leve_rec <- filter(positivos_act_recientes, TIPO_PACIENTE == 1)
+p_l_rec <- probabilidades(leve_rec, positivos_act_recientes)
+p_l_rec
+######## Infectado a Grave (Hospitalizado) #########
+hosp_rec <- filter(positivos_act_recientes, TIPO_PACIENTE == 2)
+p_h_rec <- probabilidades(hosp_rec, positivos_act_recientes)
+p_h_rec
+######## Grave (Hospitalizado) a Intubado (ICU) #########
+int_rec <- filter(positivos_act_recientes, INTUBADO == 1)
+p_i_rec <- probabilidades(int_rec, positivos_act_recientes)
+p_i_rec
+######## Intubado (ICU) a Muerte #########
+positivos_m_rec <- mutate(positivos_act_recientes, muerte = c
+                      ( ifelse( !is.na( positivos_act_recientes$FECHA_DEF ), 
+                                "Muerte", "No muerte") ) )
+muerte_rec <- filter(positivos_m_rec, muerte == "Muerte")
+p_m_rec <- probabilidades(muerte_rec, positivos_act_recientes)
+p_m_rec
 ##==============================================
+# Tabla conjunta de datos RECIENTES del 01-sep-2021 a los datos actuales de las 
+# probabilidades de transición
+p_t_rec <- cbind(p_p_rec, p_l_rec, p_h_rec, p_i_rec, p_m_rec)
+colnames(p_t_rec) <- c("Suceptible --> Infectado",
+                   "Infectado --> Ambulatorio",
+                   "Infectado --> Grave",
+                   "Grave --> ICU",
+                   "ICU --> Muerte")
+p_t_rec
+p_t
 ## Conteo de suceptibles
 
 ## Conteo de Infectados
