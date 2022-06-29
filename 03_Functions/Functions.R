@@ -75,3 +75,36 @@ probabilidades <- function(base_1, base_2){
   return(tabla_prob)
   
 }
+
+
+#########################======================================
+##
+##    FUNCION PARA LAS FECHAS DE VACUNACIÓN
+##
+##-------------------------------------------------------------
+
+fechas_vacunacion <- function(fecha){
+  
+  vac <- c()
+  
+  for (i in fecha) {
+    
+    if( i >= as.Date("2020-12-01") & i <= as.Date("2021-01-31") ) {
+      vac <- c(vac, "Primera Fase")
+    } else if ( i >= as.Date("2021-02-01") & i <= as.Date("2021-04-30") ) {
+      vac <- c(vac, "Segunda Fase")
+    } else if ( i >= as.Date("2021-05-01") & i <= as.Date("2021-05-31") ) {
+      vac <- c(vac, "Tercera Fase")
+    } else if ( i >= as.Date("2021-06-01") & i <= as.Date("2021-06-30") ) {
+      vac <- c(vac, "Cuarta Fase")
+    } else if ( i >= as.Date("2021-07-01") & i <= as.Date("2027-04-07") ) {
+      vac <- c(vac, "Quinta Fase")
+    } else {
+      vac <- c(vac, "NA")
+    }
+  }
+  
+  vac <- as.vector(vac)
+  
+  return(vac)
+}

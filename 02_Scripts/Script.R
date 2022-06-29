@@ -34,9 +34,11 @@ positivos <- filter(datos_covid_qro, CLASIFICACION_FINAL == 1 |
 # positivos contiene todos los casos POSITIVOS de la base de datos 2021
 
 re <- rangos_edades(positivos$EDAD)
+# re es un vector que contiene los rangos de edades de todos los casos positivos
 
 positivos_re <- mutate(positivos, rango_edad = re)
 # positivos_re contiene los CASOS POSITIVOS a Covid incluido el rango de edad.
+
 ######### Grafica ##########
 
 plot_positivos_re <- ggplot(positivos_re, 
@@ -142,6 +144,9 @@ plot(agroup8)
 plot(agroup9)
 layout(matrix (c (1), 1, 1))
 
+#==============================================================================
+
+
 ## ACTUALIZACION DE DATOS AL 8-04-2022=======================================++
 # datos_covidmx #base de datos de Mexico
 # datos_covid_qro_act_8_04_2022 <- filter(datos_covidmx, ENTIDAD_UM == 22) #datos de qro actualizados
@@ -200,9 +205,6 @@ ggplot(positivos_act, aes(x = FECHA_SINTOMAS, y = rango_edad, fill = 0.5 -
   scale_fill_viridis_c(name = "Tail probability", direction = -1)
 ##==============================================
 
-
-
-
 tot_jbr <- mutate(tot, individuo = 1)
 str(tot_jbr)
 # tot_jbr contiene la base de datos COMPLETA + rangos de edad + 
@@ -212,9 +214,6 @@ colnames(tot_jbexf) <- c("Rango de Edad", "FECHA_SINTOMAS", "Casos totales")
 tot_jbexf ### Se obtiene una tabla con las personas detectadas por dia y por rango de edad. No contempla 
 # su estado (positivos, negativos, hospitalizados, intubados, etc)
 ###===================+++
-
-
-
 
 ###==================++++
 ## GRAFICA DE LOS DATOS ACTUALIZADOS CON CASOS POSITIVOS ACUMULADOS 
@@ -274,21 +273,51 @@ colnames(p_t_rec) <- c("Suceptible --> Infectado",
                    "ICU --> Muerte")
 p_t_rec
 p_t
-## Conteo de suceptibles
-
-## Conteo de Infectados
-
-## Conteo de Hospitalizados
-
-## Conteo de Intubados
-
-## Conteo de Muertes
 
 
+################=============================--------------------------------
+##
+##     GRAFICA DE LAS MUERTES
+##
+##
+positivos_m_t <- mutate(datos_covid_qro_act_8_04_2022_re, muerte = c
+                          ( ifelse( !is.na( datos_covid_qro_act_8_04_2022_re$FECHA_DEF ), 
+                                    "Muerte", "No muerte") ) )
+positivos_m_t
+ggplot(positivos_m_t, 
+       aes(x = FECHA_SINTOMAS,
+           y = rango_edad,
+           fill=muerte)) +
+  geom_density_ridges2(alpha = 0.5) +
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(panel.background = element_rect(fill = "white"), 
+        axis.line = element_line(colour = "black", size = 1)) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b")
 
+#### FECHAS DE VACUNACION
+# Diciembre 2020 - Febrero 2021 : Personal de sail
+# Febrero - Mayo 2021 : 60+
+# Mayo - Junio 2021 : 50 - 59 
+# Junio - Julio 2021 : 40 - 49 
+# Julio 2021 - Marzo 2022 : resto 
 
+# vac <- fechas_vacunacion(positivos_m_t$FECHA_SINTOMAS)
 
+positivos_m_t <- mutate(positivos_m_t, FECHAS_VACUNACION = vac)
+## Ahora, positivos_m_t contiene una columna extra donde se indica la fase de 
+## vacunación, de acuerdo a lo0s datos obtenidos de la página de la secretaría de
+## salud. 
+ggplot(positivos_m_t, 
+       aes(x = FECHA_SINTOMAS,
+           y = rango_edad,
+           col = muerte,
+           fill = FECHAS_VACUNACION)) +
+  geom_density_ridges2(alpha = 0.5, size = 1) +
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(panel.background = element_rect(fill = "white"), 
+        axis.line = element_line(colour = "black", size = 1)) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b")
 
-
-
-
+## la nueva gráfica nos muestra la densidad de individuos que murieron y los que
+## no muerieron, resaltando las fases de vacunación en la que se encuentraba para
+## la fecha del inicio de síntomas.
