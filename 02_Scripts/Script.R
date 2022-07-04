@@ -154,8 +154,7 @@ layout(matrix (c (1), 1, 1))
 datos_covid_qro_act_8_04_2022
 # datos_covid_qro_act_8_04_2022 contiene los datos crudos actualizados a la
 # fecha indicada
-
-# re3 <- rangos_edades(datos_covid_qro_act_8_04_2022$EDAD)
+re3 <- rangos_edades(datos_covid_qro_act_8_04_2022$EDAD)
 datos_covid_qro_act_8_04_2022_re <- mutate(datos_covid_qro_act_8_04_2022, rango_edad = re3)
 #datos_covid_qro_act_8_04_2022_re cotneiene los datos actualizados y se agrega
 #la clasificación de los rangos de edad
