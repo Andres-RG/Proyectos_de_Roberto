@@ -5,6 +5,11 @@ date: "`r format(Sys.time(), '%B %d , %Y')`"
 output: html_document
 ---
 
+```{r}
+source("02_Scripts/Script.R")
+```
+
+
 # Modelo inicial
 
 ## Diagrama por compartimentos
@@ -163,7 +168,7 @@ print(t)
 ## Tabla de Probabilidades
 
 ```{r}
-# source("02_Scripts/Script.R")
+#source("02_Scripts/Script.R")
 #p_t <- cbind(p_p, p_l, p_h, p_i, p_m)
 #colnames(p_t) <- c("Suceptible --> Infectado",
 #                      "Infectado --> Ambulatorio",

@@ -167,9 +167,9 @@ positivos_act <- filter(datos_covid_qro_act_8_04_2022, CLASIFICACION_FINAL == 1 
 # de edad
 
 #####
-#pos <- c() #crea un vector vacio
-#for (i in 1:length(positivos_act$FECHA_SINTOMAS) ) {
-#   pos <- c(pos,1) } # por cada uno de los positivos, coloca un 1 en el vector-
+pos <- c() #crea un vector vacio
+for (i in 1:length(positivos_act$FECHA_SINTOMAS) ) {
+   pos <- c(pos,1) } # por cada uno de los positivos, coloca un 1 en el vector-
 positivos_act <- mutate(positivos_act, positivos = pos) # genera una nueva columna en la base de los positivos
 # la nueva columna la rellena con el vector de 1's creado. Hay un 1 en todos los renglones
 # Suma todos los positivos de un solo fía por fecha de inicio de sintomas
@@ -185,7 +185,7 @@ positivos_conteo
 
 #####
 
-# re2 <- rangos_edades(positivos_act$EDAD)
+re2 <- rangos_edades(positivos_act$EDAD)
 positivos_act <- mutate(positivos_act, rango_edad = re2)
 positivos_act <- mutate(positivos_act, muerte = c
                                 ( ifelse( !is.na( positivos_act$FECHA_DEF ), 
@@ -300,7 +300,7 @@ ggplot(positivos_m_t,
 # Junio - Julio 2021 : 40 - 49 
 # Julio 2021 - Marzo 2022 : resto 
 
-# vac <- fechas_vacunacion(positivos_m_t$FECHA_SINTOMAS)
+vac <- fechas_vacunacion(positivos_m_t$FECHA_SINTOMAS)
 
 positivos_m_t <- mutate(positivos_m_t, FECHAS_VACUNACION = vac)
 ## Ahora, positivos_m_t contiene una columna extra donde se indica la fase de 
