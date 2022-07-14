@@ -307,7 +307,6 @@ positivos_m_t <- mutate(positivos_m_t, FECHAS_VACUNACION = vac)
 ## vacunación, de acuerdo a lo0s datos obtenidos de la página de la secretaría de
 ## salud.
 
-pdf("04_Output/Plots/positivos_muerte_vacunacion.pdf")
 plot_positivos_m_t <- ggplot(positivos_m_t, 
        aes(x = FECHA_SINTOMAS,
            y = rango_edad,
@@ -320,7 +319,10 @@ plot_positivos_m_t <- ggplot(positivos_m_t,
   scale_x_date(date_breaks = "1 month", date_labels = "%b") +
   labs(y = "Rangos de edades", x = "Tiempo") +
   ggtitle("Densidad de casos positivos que murieron y que no muerieron con las fechas de vacunación")
-dev.off()
+plot_positivos_m_t
+
+ggsave("04_Output/Plots/positivos_muertes_fechas_vac.png", width = 28, height = 14, 
+       units = c("cm"))
 
 ## la nueva gráfica nos muestra la densidad de individuos que murieron y los que
 ## no muerieron, resaltando las fases de vacunación en la que se encuentraba para
