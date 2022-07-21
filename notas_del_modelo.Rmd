@@ -253,11 +253,13 @@ Para establecer el modelo, se tomará como referencia el modelo modificado a par
 +----------------+------------------------------------------------------------+
 | Parámetros     | Significado                                                |
 +================+============================================================+
-| $\beta$        | Tasa de infección por la interacción $SI$ **Este parámetro tiene estructura de edad** |
+| $\beta$        | Tasa de infección por la interacción $SI$ y $SI_l$ **Este parámetro tiene estructura de edad** |
 +----------------+------------------------------------------------------------+
 | $\alpha$       | Tasa/Tiempo a la que los individuos infectados expuestos se vuelven infectados infectantes | 
 +----------------+------------------------------------------------------------+
-| $\delta$       | Tasa/Tiempo a la que los individuos infectados se vuelven infectados leves o infectados hospitalizados |
+| $\delta_l$       | Tasa/Tiempo a la que los individuos infectados se vuelven infectados leves |
++----------------+------------------------------------------------------------+
+| $\delta_g$       | Tasa/Tiempo a la que los individuos infectados se vuelven infectados graves (hospitalizados) |
 +----------------+------------------------------------------------------------+
 | $p_h$          | Fracción de individuos infectados que son hospitalizados $0 \le p_g \le 1$ **Este parámetro tiene estructura de edad** |
 +----------------+------------------------------------------------------------+
@@ -271,7 +273,7 @@ Para establecer el modelo, se tomará como referencia el modelo modificado a par
 +----------------+------------------------------------------------------------+
 | $(1-p_i)$      | Resto de individuos hospitalizados que no son intubados, se recuperan | 
 +----------------+------------------------------------------------------------+
-| $\delta h$     | Tasa/Tiempo a la que los individuos hospitalizados son intubados 
+| $\delta _h$     | Tasa/Tiempo a la que los individuos hospitalizados son intubados 
 +----------------+------------------------------------------------------------+
 | $\mu$          | Fracción de individuos intubados que mueren $0 \le \mu \le 1$ **Este parámetro tiene estructura de edad** |
 +----------------+------------------------------------------------------------+
@@ -296,18 +298,18 @@ Para establecer el modelo, se tomará como referencia el modelo modificado a par
 - $I_2$ : individuos infectados que son infectantes del grupo 2
 - $I_3$ : individuos infectados que son infectantes del grupo 3
 - $I_4$ : individuos infectados que son infectantes del grupo 4
-- $I_l_1$ : individuos infectados leves del grupo 1
-- $I_l_2$ : individuos infectados leves del grupo 2
-- $I_l_3$ : individuos infectados leves del grupo 3
-- $I_l_4$ : individuos infectados leves del grupo 4
-- $I_h_1$ : individuos infectados hospitalizados del grupo 1
-- $I_h_2$ : individuos infectados hospitalizados del grupo 2
-- $I_h_3$ : individuos infectados hospitalizados del grupo 3
-- $I_h_4$ : individuos infectados hospitalizados del grupo 4
-- $I_i_1$ : individuos infectados intubados del grupo 1
-- $I_i_2$ : individuos infectados intubados del grupo 2
-- $I_i_3$ : individuos infectados intubados del grupo 3
-- $I_i_4$ : individuos infectados intubados del grupo 4
+- $I_{l1}$ : individuos infectados leves del grupo 1
+- $I_{l2}$ : individuos infectados leves del grupo 2
+- $I_{l3}$ : individuos infectados leves del grupo 3
+- $I_{l4}$ : individuos infectados leves del grupo 4
+- $I_{h1}$ : individuos infectados hospitalizados del grupo 1
+- $I_{h2}$ : individuos infectados hospitalizados del grupo 2
+- $I_{h3}$ : individuos infectados hospitalizados del grupo 3
+- $I_{h4}$ : individuos infectados hospitalizados del grupo 4
+- $I_{i1}$ : individuos infectados intubados del grupo 1
+- $I_{i2}$ : individuos infectados intubados del grupo 2
+- $I_{i3}$ : individuos infectados intubados del grupo 3
+- $I_{i4}$ : individuos infectados intubados del grupo 4
 - $R_1$ : individuos recuperados del grupo 1
 - $R_2$ : individuos recuperados del grupo 2
 - $R_3$ : individuos recuperados del grupo 3
@@ -321,44 +323,44 @@ Para establecer el modelo, se tomará como referencia el modelo modificado a par
 
 $$\begin{array}{l}
 \text{Para el grupo 1 :} \\
-\dot S_1 = -\beta_1 S_1 I_1 \\
-\dot E_1 = \beta_1 S_1 I_1 - \alpha E_1 \\
-\dot I_1 = \alpha E_1 - p_{h1} \delta I_1 - p_{l1} \delta I_1 \\
-\dot I_{l1} = p_{l1}) \delta I_1 - \gamma _R I_{l1} \\
-\dot I_{h1} = p_{h1} \delta I_1 - p_{i1} \delta _h I_{h1} - (1-p_{i1}) \gamma _h I_{h1} \\
+\dot S_1 = -\beta_1 S_1 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} )  \\
+\dot E_1 = \beta_1 S_1 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) - \alpha E_1 \\
+\dot I_1 = \alpha E_1 - p_{h1} \delta_g I_1 - p_{l1} \delta_l I_1 \\
+\dot I_{l1} = p_{l1} \delta_l I_1 - \gamma _R I_{l1} \\
+\dot I_{h1} = p_{h1} \delta_g I_1 - p_{i1} \delta _h I_{h1} - (1-p_{i1}) \gamma _h I_{h1} \\
 \dot I_{i1} = p_{i1} \delta _h I_{h1} - \mu _1 \delta _i I_{i1} - (1-\mu_1)\gamma _i I_{i1} \\
 \dot M_1 = \mu_1 \delta _i I_{i1} \\ 
 \dot R_1 = \gamma _R I_{l1} + (1-p_{i1} ) \gamma _h I_{h1} + ( 1-\mu_1 ) \gamma _i I_{i1}
 \\
 \\
 \text{Para el grupo 2 :} \\
-\dot S_2 = -\beta_2 S_2 I_2 \\
-\dot E_2 = \beta_2 S_2 I_2 - \alpha E_2 \\
-\dot I_2 = \alpha E_2 - p_{h2} \delta I_2 - p_{l2} \delta I_2 \\
-\dot I_{l2} = p_{l2} \delta I_2 - \gamma _R I_{l2} \\
-\dot I_{h2} = p_{h2} \delta I_2 - p_{i2} \delta _h I_{h2} - (1-p_{i2}) \gamma _h I_{h2} \\
+\dot S_2 = -\beta_2 S_2 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) \\
+\dot E_2 = \beta_2 S_2 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) - \alpha E_2 \\
+\dot I_2 = \alpha E_2 - p_{h2} \delta_g I_2 - p_{l2} \delta_l I_2 \\
+\dot I_{l2} = p_{l2} \delta_l I_2 - \gamma _R I_{l2} \\
+\dot I_{h2} = p_{h2} \delta_g I_2 - p_{i2} \delta _h I_{h2} - (1-p_{i2}) \gamma _h I_{h2} \\
 \dot I_{i2} = p_{i2} \delta _h I_{h2} - \mu _2 \delta _i I_{i2} - (1-\mu_2)\gamma _i I_{i2} \\
 \dot M_2 = \mu_2 \delta _i I_{i2} \\ 
 \dot R_2 = \gamma _R I_{l2} + (1-p_{i2} ) \gamma _h I_{h2} + ( 1-\mu_2 ) \gamma _i I_{i2}
 \\
 \\
 \text{Para el grupo 3 :} \\
-\dot S_3 = -\beta_3 S_3 I_3 \\
-\dot E_3 = \beta_3 S_3 I_3 - \alpha E_3 \\
-\dot I_3 = \alpha E_3 - p_{h3} \delta I_3 - p_{l3} \delta I_3 \\
-\dot I_{l3} = p_{l3} \delta I_3 - \gamma _R I_{l3} \\
-\dot I_{h3} = p_{h3} \delta I_3 - p_{i3} \delta _h I_{h3} - (1-p_{i3}) \gamma _h I_{h3} \\
+\dot S_3 = -\beta_3 S_3 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) \\
+\dot E_3 = \beta_3 S_3 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) - \alpha E_3 \\
+\dot I_3 = \alpha E_3 - p_{h3} \delta_g I_3 - p_{l3} \delta_l I_3 \\
+\dot I_{l3} = p_{l3} \delta_l I_3 - \gamma _R I_{l3} \\
+\dot I_{h3} = p_{h3} \delta_g I_3 - p_{i3} \delta _h I_{h3} - (1-p_{i3}) \gamma _h I_{h3} \\
 \dot I_{i3} = p_{i3} \delta _h I_{h3} - \mu _3 \delta _i I_{i3} - (1-\mu_3)\gamma _i I_{i3} \\
 \dot M_3 = \mu_3 \delta _i I_{i3} \\ 
 \dot R_3 = \gamma _R I_{l3} + (1-p_{i3} ) \gamma _h I_{h3} + ( 1-\mu_3 ) \gamma _i I_{i3}
 \\
 \\
 \text{Para el grupo 4 :} \\
-\dot S_4 = -\beta_4 S_4 I_4 \\
-\dot E_4 = \beta_4 S_4 I_4 - \alpha E_4 \\
-\dot I_4 = \alpha E_4 - p_{h4} \delta I_4 - p_{l4} \delta I_4 \\
-\dot I_{l4} = p_{l4} \delta I_4 - \gamma _R I_{l4} \\
-\dot I_{h4} = p_{h4} \delta I_4 - p_{i4} \delta _h I_{h4} - (1-p_{i4}) \gamma _h I_{h4} \\
+\dot S_4 = -\beta_4 S_4 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) \\
+\dot E_4 = \beta_4 S_4 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) - \alpha E_4 \\
+\dot I_4 = \alpha E_4 - p_{h4} \delta_g I_4 - p_{l4} \delta_l I_4 \\
+\dot I_{l4} = p_{l4} \delta_l I_4 - \gamma _R I_{l4} \\
+\dot I_{h4} = p_{h4} \delta_g I_4 - p_{i4} \delta _h I_{h4} - (1-p_{i4}) \gamma _h I_{h4} \\
 \dot I_{i4} = p_{i4} \delta _h I_{h4} - \mu _4 \delta _i I_{i4} - (1-\mu_4)\gamma _i I_{i4} \\
 \dot M_4 = \mu_4 \delta _i I_{i4} \\ 
 \dot R_4 = \gamma _R I_{l4} + (1-p_{i4} ) \gamma _h I_{h4} + ( 1-\mu_4 ) \gamma _i I_{i4}
@@ -439,21 +441,26 @@ tasas_x_edad
 
 ```{r}
 
-# Parámetros definidos del modelo de la CDMX
-Dincub  <- 5.2  # Tiempo de incubación (dias)
-Dinfect <- 2.9  # Tiempo en el que es infeccioso el paciente (dias)
-DRL     <- 14   # Tiempo de recuperacion de casos leves (dias)
+##  Parámetros definidos del modelo de la CDMX. Ajustados a datos actuales.
+Dincub  <- 5.6  # Tiempo de incubación (dias) (Quesada et al., 2021 DOI: 10.1016/j.rceng.2020.08.002)
+Dinfect <- 5.5  # Tiempo en el que es infeccioso el paciente (Xin et al., 2021 https://doi.org/10.1093/cid/ciab746)
+DRL     <- 14   # Tiempo de recuperacion de casos leves (dias) #Se mantiene de diversas fuentes
 Dhosp   <- 4    # Tiempo entre presencia de sintomas y hospitalización en casos graves (dias)
 DRH     <- 12   # Tiempo entre hospitalizacion de casos gravez no UCI y recuperacion (dias) 
 DM      <- 8    # Tiempo entre ingreso a UCI y deceso
 DRICU   <- 7    # Tiempo entre ingreso a UCI y recuperación (dias)
 DICU    <- 1    # Tiempo entre ingreso a hospitalización e ingreso a UCI
-R_0     <- 2.83 
-#
-B_1 <- R_0/tasas_x_edad[1,1] # Definido como el modelo de la CDMX con los parámetros obtenidos por EDAD
-B_2 <- R_0/tasas_x_edad[2,1]
-B_3 <- R_0/tasas_x_edad[3,1]
-B_4 <- R_0/tasas_x_edad[4,1]
+TIME <- 3 # número de años a simular
+N <- 2368000
+##
+
+
+
+# Parámetros para el modelo
+B_1 <- tasas_x_edad[1,1] # Definido por los parámetros obtenidos por EDAD
+B_2 <- tasas_x_edad[2,1]
+B_3 <- tasas_x_edad[3,1]
+B_4 <- tasas_x_edad[4,1]
 #
 alpha <- 1/Dincub # Definido como el modelo de la CDMX
 #
@@ -467,9 +474,11 @@ p_grave_2 <- tasas_x_edad[2,3]
 p_grave_3 <- tasas_x_edad[3,3]
 p_grave_4 <- tasas_x_edad[4,3]
 #
-delta <- 1/Dinfect # Definido como el modelo de la CDMX
+delta_l <- 1/Dinfect # Definido como el modelo de la CDMX
 #
-gamma_R <- 1/DRL # Definido como el modelo de la CDMX
+delta_g <- 1/Dhosp # Definido como el modelo de la CDMX
+#
+gamma_l <- 1/DRL # Definido como el modelo de la CDMX
 #
 delta_h <- 1/DICU # Definido como el modelo de la CDMX
 #
@@ -491,3 +500,215 @@ gamma_ricu_i <- 1/DRICU  # Definido como el modelo de la CDMX
 #
 ```
 
+## Resolución numérica
+
+```
+
+modelo_covid <- function(t, x, params) {
+  
+  S1   <- x[1] # Suceptibles                grupo 1
+  E1   <- x[2] # Expuestos                  grupo 1
+  I1   <- x[3] # Infectados                 grupo 1
+  I_l1 <- x[4] # Infectados leves           grupo 1
+  I_h1 <- x[5] # Infectados hospitalizados  grupo 1
+  I_i1 <- x[6] # Infectados intubados       grupo 1
+  R1   <- x[7] # Recuperados                grupo 1
+  M1   <- x[8] # Fallecimientos             grupo 1
+  
+  
+  S2   <- x[9]  # Suceptibles                grupo 2
+  E2   <- x[10] # Expuestos                  grupo 2
+  I2   <- x[11] # Infectados                 grupo 2
+  I_l2 <- x[12] # Infectados leves           grupo 2
+  I_h2 <- x[13] # Infectados hospitalizados  grupo 2
+  I_i2 <- x[14] # Infectados intubados       grupo 2
+  R2   <- x[15] # Recuperados                grupo 2
+  M2   <- x[16] # Fallecimientos             grupo 2
+  
+  
+  S3   <- x[17] # Suceptibles                grupo 3
+  E3   <- x[18] # Expuestos                  grupo 3
+  I3   <- x[19] # Infectados                 grupo 3
+  I_l3 <- x[20] # Infectados leves           grupo 3
+  I_h3 <- x[21] # Infectados hospitalizados  grupo 3
+  I_i3 <- x[22] # Infectados intubados       grupo 3
+  R3   <- x[23] # Recuperados                grupo 3
+  M3   <- x[24] # Fallecimientos             grupo 3
+  
+  
+  S4   <- x[25] # Suceptibles                grupo 4
+  E4   <- x[26] # Expuestos                  grupo 4
+  I4   <- x[27] # Infectados                 grupo 4
+  I_l4 <- x[28] # Infectados leves           grupo 4
+  I_h4 <- x[29] # Infectados hospitalizados  grupo 4
+  I_i4 <- x[30] # Infectados intubados       grupo 4
+  R4   <- x[31] # Recuperados                grupo 4
+  M4   <- x[32] # Fallecimientos             grupo 4
+  
+  with(as.list(params), 
+       
+       {
+         
+         ## GRUPO 1
+         S1 <- - B_1 * S1 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4)
+         E1 <- B_1 * S1 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) - ( alpha * E1 )
+         I1 <- ( alpha * E1 ) - ( p_grave_1 * delta_g * I1) - ( p_leve_1 * delta_l * I1 )
+         I_l1 <- ( p_leve_1 * delta_l * I1 ) - ( gamma_l * I_l1 )
+         I_h1 <- ( p_grave_1 * delta_g * I1) - ( p_i_1 * delta_h * I_h1 ) - ( ( 1 - p_i_1 ) * gamma_h * I_h1 )
+         I_i1 <- ( p_i_1 * delta_h * I_h1 ) - ( mu_1 * delta_i * I_i1 ) - ( ( 1 - mu_1 ) * gamma_ricu_i * I_i1 )
+         R1 <- ( gamma_l * I_l1 ) + ( ( 1 - p_i_1 ) * gamma_h * I_h1 ) + ( ( 1 - mu_1 ) * gamma_ricu_i * I_i1 )
+         M1 <-  mu_1 * delta_i * I_i1 
+         
+         
+         
+         ## GRUPO 2
+         S2 <- - B_2 * S2 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4)
+         E2 <- B_2 * S2 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) - ( alpha * E2 )
+         I2 <- ( alpha * E2 ) - ( p_grave_2 * delta_g * I2) - ( p_leve_2 * delta_l * I2 )
+         I_l2 <- ( p_leve_2 * delta_l * I2 ) - ( gamma_l * I_l2 )
+         I_h2 <- ( p_grave_2 * delta_g * I2) - ( p_i_2 * delta_h * I_h2 ) - ( ( 1 - p_i_2 ) * gamma_h * I_h2 )
+         I_i2 <- ( p_i_2 * delta_h * I_h2 ) - ( mu_2 * delta_i * I_i2 ) - ( ( 1 - mu_2 ) * gamma_ricu_i * I_i2 )
+         R2 <- ( gamma_l * I_l2 ) + ( ( 1 - p_i_2 ) * gamma_h * I_h2 ) + ( ( 1 - mu_2 ) * gamma_ricu_i * I_i2 )
+         M2 <-  mu_2 * delta_i * I_i2 
+         
+         
+         
+         ## GRUPO 3
+         S3 <- - B_3 * S3 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4)
+         E3 <- B_3 * S3 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) - ( alpha * E3 )
+         I3 <- ( alpha * E3 ) - ( p_grave_3 * delta_g * I3) - ( p_leve_3 * delta_l * I3 )
+         I_l3 <- ( p_leve_3 * delta_l * I3 ) - ( gamma_l * I_l3 )
+         I_h1 <- ( p_grave_3 * delta_g * I3) - ( p_i_3 * delta_h * I_h3 ) - ( ( 1 - p_i_3 ) * gamma_h * I_h3 )
+         I_i3 <- ( p_i_3 * delta_h * I_h3 ) - ( mu_3 * delta_i * I_i3 ) - ( ( 1 - mu_3 ) * gamma_ricu_i * I_i3 )
+         R3 <- ( gamma_l * I_l3 ) + ( ( 1 - p_i_3 ) * gamma_h * I_h3 ) + ( ( 1 - mu_3 ) * gamma_ricu_i * I_i3 )
+         M3 <-  mu_3 * delta_i * I_i3
+         
+         
+         
+         ## GRUPO 4
+         S4 <- - B_4 * S4 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4)
+         E4 <- B_4 * S4 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) - ( alpha * E4 )
+         I4 <- ( alpha * E4 ) - ( p_grave_4 * delta_g * I4) - ( p_leve_4 * delta_l * I4 )
+         I_l4 <- ( p_leve_4 * delta_l * I4 ) - ( gamma_l * I_l4 )
+         I_h4 <- ( p_grave_4 * delta_g * I4) - ( p_i_4 * delta_h * I_h4 ) - ( ( 1 - p_i_4 ) * gamma_h * I_h4 )
+         I_i4 <- ( p_i_4 * delta_h * I_h4 ) - ( mu_4 * delta_i * I_i4 ) - ( ( 1 - mu_4 ) * gamma_ricu_i * I_i4 )
+         R4 <- ( gamma_l * I_l4 ) + ( ( 1 - p_i_4 ) * gamma_h * I_h4 ) + ( ( 1 - mu_4 ) * gamma_ricu_i * I_i4 )
+         M4 <-  mu_4 * delta_i * I_i4
+         
+         
+         
+         dx <- c(S1, E1, I1, I_l1, I_h1, I_i1, R1, M1,
+                 S2, E2, I2, I_l2, I_h2, I_i2, R2, M2,
+                 S3, E3, I3, I_l3, I_h3, I_i3, R3, M3,
+                 S4, E4, I4, I_l4, I_h4, I_i4, R4, M4)
+         list(dx)
+         
+       }
+       )
+}
+
+```
+
+```{r}
+# Tiempo
+times <- seq (1, 1095 * TIME, by = 1)
+
+# Parámetros
+params <- c(
+  
+  B_1          = B_1,
+  B_2          = B_2,
+  B_3          = B_3,
+  B_4          = B_4,
+  
+  
+  alpha        = alpha,
+  
+  
+  p_leve_1     = p_leve_1,
+  p_leve_2     = p_leve_2,
+  p_leve_3     = p_leve_3,
+  p_leve_4     = p_leve_4,
+  
+  delta_l      = delta_l,
+  
+  gamma_l      = gamma_l,
+  
+  
+  p_grave_1    = p_grave_1,
+  p_grave_2    = p_grave_2,
+  p_grave_3    = p_grave_3,
+  p_grave_4    = p_grave_4,
+  
+  delta_g      = delta_g,
+  
+  gamma_h      = gamma_h,
+  
+  
+  p_i_1        = p_i_1,
+  p_i_2        = p_i_2,
+  p_i_3        = p_i_3,
+  p_i_4        = p_i_4,
+  
+  delta_h      = delta_h,
+  
+  gamma_ricu_i = gamma_ricu_i,
+  
+  
+  mu_1         = mu_1,
+  mu_2         = mu_2,
+  mu_3         = mu_3,
+  mu_4         = mu_4,
+  
+  delta_i      = delta_i
+  
+)
+
+#Condiciones iniciales del sistema
+xstart <- c( 
+  
+  S1    = N - 7,
+  E1    = 0,
+  I1    = 1,
+  I_l1  = 0,
+  I_h1  = 0,
+  I_i1  = 0,
+  R1    = 0,
+  M1    = 0,
+  
+  S2    = N - 7,
+  E2    = 0,
+  I2    = 1,
+  I_l2  = 0,
+  I_h2  = 0,
+  I_i2  = 0,
+  R2    = 0,
+  M2    = 0,
+  
+  S3    = N - 7,
+  E3    = 0,
+  I3    = 1,
+  I_l3  = 0,
+  I_h3  = 0,
+  I_i3  = 0,
+  R3    = 0,
+  M3    = 0,
+  
+  S4    = N - 7,
+  E4    = 0,
+  I4    = 1,
+  I_l4  = 0,
+  I_h4  = 0,
+  I_i4  = 0,
+  R4    = 0,
+  M4    = 0,
+  
+  )
+```
+
+```
+out <- as.data.frame(ode(y     = xstart, 
+                         times = times, 
+                         fun   = modelo_covid,
+                         parms = params))
+```
