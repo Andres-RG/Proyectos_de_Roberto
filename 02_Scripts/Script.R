@@ -148,11 +148,11 @@ layout(matrix (c (1), 1, 1))
 
 
 ## ACTUALIZACION DE DATOS AL 8-04-2022=======================================++
-# datos_covidmx #base de datos de Mexico
-# datos_covid_qro_act_8_04_2022 <- filter(datos_covidmx, ENTIDAD_UM == 22) #datos de qro actualizados
-# save(datos_covid_qro_act_8_04_2022, file = "01_Raw_Data/datos_covid_qro_actualizados.RData")
+datos_covidmx #base de datos de Mexico
+datos_covid_qro_act_8_04_2022 <- filter(datos_covidmx, ENTIDAD_UM == 22) #datos de qro actualizados
+save(datos_covid_qro_act_8_04_2022, file = "01_Raw_Data/datos_covid_qro_actualizados.RData")
 datos_covid_qro_act_8_04_2022
-# datos_covid_qro_act_8_04_2022 contiene los datos crudos actualizados a la
+#datos_covid_qro_act_8_04_2022 contiene los datos crudos actualizados a la
 # fecha indicada
 re3 <- rangos_edades(datos_covid_qro_act_8_04_2022$EDAD)
 datos_covid_qro_act_8_04_2022_re <- mutate(datos_covid_qro_act_8_04_2022, rango_edad = re3)
