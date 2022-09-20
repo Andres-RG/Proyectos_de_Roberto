@@ -502,7 +502,11 @@ gamma_ricu_i <- 1/DRICU  # Definido como el modelo de la CDMX
 
 ## Resolución numérica
 
+```{r}
+library(deSolve)
 ```
+
+```{r}
 
 modelo_covid <- function(t, x, params) {
   
@@ -611,7 +615,7 @@ modelo_covid <- function(t, x, params) {
 
 ```{r}
 # Tiempo
-times <- seq (1, 1095 * TIME, by = 1)
+times <- seq (1, 10, by = 0.01)
 
 # Parámetros
 params <- c(
@@ -701,14 +705,16 @@ xstart <- c(
   I_h4  = 0,
   I_i4  = 0,
   R4    = 0,
-  M4    = 0,
+  M4    = 0
   
   )
 ```
 
-```
+```{r}
 out <- as.data.frame(ode(y     = xstart, 
                          times = times, 
-                         fun   = modelo_covid,
-                         parms = params))
+                         func   = modelo_covid,
+                         parms = params,
+                         method = "euler"))
+out
 ```
