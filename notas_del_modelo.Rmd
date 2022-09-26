@@ -323,8 +323,8 @@ Para establecer el modelo, se tomará como referencia el modelo modificado a par
 
 $$\begin{array}{l}
 \text{Para el grupo 1 :} \\
-\dot S_1 = -\beta_1 S_1 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} )  \\
-\dot E_1 = \beta_1 S_1 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) - \alpha E_1 \\
+\dot S_1 = \frac { -\beta_1 S_1 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) } {N} \\
+\dot E_1 = \frac { \beta_1 S_1 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) } {N} - \alpha E_1 \\
 \dot I_1 = \alpha E_1 - p_{h1} \delta_g I_1 - p_{l1} \delta_l I_1 \\
 \dot I_{l1} = p_{l1} \delta_l I_1 - \gamma _R I_{l1} \\
 \dot I_{h1} = p_{h1} \delta_g I_1 - p_{i1} \delta _h I_{h1} - (1-p_{i1}) \gamma _h I_{h1} \\
@@ -334,8 +334,8 @@ $$\begin{array}{l}
 \\
 \\
 \text{Para el grupo 2 :} \\
-\dot S_2 = -\beta_2 S_2 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) \\
-\dot E_2 = \beta_2 S_2 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) - \alpha E_2 \\
+\dot S_2 = \frac { -\beta_2 S_2 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) } {N} \\
+\dot E_2 = \frac { \beta_2 S_2 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) } {N} - \alpha E_2 \\
 \dot I_2 = \alpha E_2 - p_{h2} \delta_g I_2 - p_{l2} \delta_l I_2 \\
 \dot I_{l2} = p_{l2} \delta_l I_2 - \gamma _R I_{l2} \\
 \dot I_{h2} = p_{h2} \delta_g I_2 - p_{i2} \delta _h I_{h2} - (1-p_{i2}) \gamma _h I_{h2} \\
@@ -345,8 +345,8 @@ $$\begin{array}{l}
 \\
 \\
 \text{Para el grupo 3 :} \\
-\dot S_3 = -\beta_3 S_3 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) \\
-\dot E_3 = \beta_3 S_3 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) - \alpha E_3 \\
+\dot S_3 = \frac { -\beta_3 S_3 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) } {N} \\
+\dot E_3 = \frac { \beta_3 S_3 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) } {N} - \alpha E_3 \\
 \dot I_3 = \alpha E_3 - p_{h3} \delta_g I_3 - p_{l3} \delta_l I_3 \\
 \dot I_{l3} = p_{l3} \delta_l I_3 - \gamma _R I_{l3} \\
 \dot I_{h3} = p_{h3} \delta_g I_3 - p_{i3} \delta _h I_{h3} - (1-p_{i3}) \gamma _h I_{h3} \\
@@ -356,8 +356,8 @@ $$\begin{array}{l}
 \\
 \\
 \text{Para el grupo 4 :} \\
-\dot S_4 = -\beta_4 S_4 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) \\
-\dot E_4 = \beta_4 S_4 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) - \alpha E_4 \\
+\dot S_4 = \frac { -\beta_4 S_4 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) } {N} \\
+\dot E_4 = \frac { \beta_4 S_4 * ( I_1 + I_2 + I_3 + I_4 + I_{l1} + I_{l2} + I_{l3} + I_{l4} ) } {N} - \alpha E_4 \\
 \dot I_4 = \alpha E_4 - p_{h4} \delta_g I_4 - p_{l4} \delta_l I_4 \\
 \dot I_{l4} = p_{l4} \delta_l I_4 - \gamma _R I_{l4} \\
 \dot I_{h4} = p_{h4} \delta_g I_4 - p_{i4} \delta _h I_{h4} - (1-p_{i4}) \gamma _h I_{h4} \\
@@ -554,8 +554,8 @@ modelo_covid <- function(t, x, params) {
        {
          
          ## GRUPO 1
-         S1 <- - B_1 * S1 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4)
-         E1 <- B_1 * S1 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) - ( alpha * E1 )
+         S1 <- - ( ( B_1 * S1 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) ) / N ) 
+         E1 <- ( ( B_1 * S1 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) ) / N ) - ( alpha * E1 )
          I1 <- ( alpha * E1 ) - ( p_grave_1 * delta_g * I1) - ( p_leve_1 * delta_l * I1 )
          I_l1 <- ( p_leve_1 * delta_l * I1 ) - ( gamma_l * I_l1 )
          I_h1 <- ( p_grave_1 * delta_g * I1) - ( p_i_1 * delta_h * I_h1 ) - ( ( 1 - p_i_1 ) * gamma_h * I_h1 )
@@ -566,8 +566,8 @@ modelo_covid <- function(t, x, params) {
          
          
          ## GRUPO 2
-         S2 <- - B_2 * S2 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4)
-         E2 <- B_2 * S2 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) - ( alpha * E2 )
+         S2 <- ( ( - B_2 * S2 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) ) / N )
+         E2 <- ( ( B_2 * S2 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) ) / N ) - ( alpha * E2 )
          I2 <- ( alpha * E2 ) - ( p_grave_2 * delta_g * I2) - ( p_leve_2 * delta_l * I2 )
          I_l2 <- ( p_leve_2 * delta_l * I2 ) - ( gamma_l * I_l2 )
          I_h2 <- ( p_grave_2 * delta_g * I2) - ( p_i_2 * delta_h * I_h2 ) - ( ( 1 - p_i_2 ) * gamma_h * I_h2 )
@@ -578,8 +578,8 @@ modelo_covid <- function(t, x, params) {
          
          
          ## GRUPO 3
-         S3 <- - B_3 * S3 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4)
-         E3 <- B_3 * S3 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) - ( alpha * E3 )
+         S3 <- ( ( - B_3 * S3 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) ) / N )
+         E3 <- ( ( B_3 * S3 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) ) / N ) - ( alpha * E3 )
          I3 <- ( alpha * E3 ) - ( p_grave_3 * delta_g * I3) - ( p_leve_3 * delta_l * I3 )
          I_l3 <- ( p_leve_3 * delta_l * I3 ) - ( gamma_l * I_l3 )
          I_h1 <- ( p_grave_3 * delta_g * I3) - ( p_i_3 * delta_h * I_h3 ) - ( ( 1 - p_i_3 ) * gamma_h * I_h3 )
@@ -590,8 +590,8 @@ modelo_covid <- function(t, x, params) {
          
          
          ## GRUPO 4
-         S4 <- - B_4 * S4 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4)
-         E4 <- B_4 * S4 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) - ( alpha * E4 )
+         S4 <- ( ( - B_4 * S4 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) ) / N )
+         E4 <- ( ( B_4 * S4 * (I1 + I2 + I3 + I4 + I_l1 + I_l2 + I_l3 + I_l4) ) / N ) - ( alpha * E4 )
          I4 <- ( alpha * E4 ) - ( p_grave_4 * delta_g * I4) - ( p_leve_4 * delta_l * I4 )
          I_l4 <- ( p_leve_4 * delta_l * I4 ) - ( gamma_l * I_l4 )
          I_h4 <- ( p_grave_4 * delta_g * I4) - ( p_i_4 * delta_h * I_h4 ) - ( ( 1 - p_i_4 ) * gamma_h * I_h4 )
